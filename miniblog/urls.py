@@ -18,7 +18,10 @@ from django.urls import path
 from blog import views
 from django.conf import settings
 from django.conf.urls.static import static 
-admin.title='welcome vaibhav'
+from django.contrib.auth import views as auth_views
+admin.site.site_header='MiniBlog'
+admin.site.index_title='Welcome to the MiniBlog Portal'
+admin.site.site_title = "MiniBlog Admin Portal"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,5 +36,15 @@ urlpatterns = [
     path('updatepost/<int:id>/',views.updatepost,name='updatepost'),
     path('deletepost/<int:id>/',views.deletepost,name='deletepost'),
     path('addcomment/',views.addcomments,name='comment'),
+    path('deletecomment/<int:sno>/',views.deletecomment,name='delete'),
+    path('editcomment/<int:sno>/',views.editcomment,name='editcomment'),
+    path('reset_password',auth_views.PasswordResetView.as_view(),name='reset_password'),
+
+    path('reset_password_done',auth_views.PasswordResetDoneView.as_view(),name='password_reset_done'),
+    path('reset_password_conf/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
+    path('reset_password_comp/',auth_views.PasswordResetCompleteView.as_view(template_name='core/signinagain.html'),name='password_reset_complete'),
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+
+
+

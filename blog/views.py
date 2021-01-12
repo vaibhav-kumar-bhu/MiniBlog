@@ -13,8 +13,18 @@ from django.core.mail import send_mail
 def home(request):
 	posts=post.objects.all()
 	comment=addcomment.objects.all()
-	context={'posts':posts,'comment':comment}
-	return render(request,'core/home.html',context)
+	
+	if request.user.is_authenticated:
+		
+		context={'posts':posts,'comment':comment,'User':request.user}
+		return render(request,'core/home.html',context)
+	else:
+		context={'posts':posts,'comment':comment,'User':None}
+
+		return render(request,'core/home.html',context)
+
+	
+	
 	
 
 def about(request):
@@ -166,6 +176,32 @@ def addcomments(request):
 	else:
 		return HttpResponseRedirect('/login/')
 '''
+
+def deletecomment(request,sno):
+	if request.user.is_authenticated:
+		if request.method=='POST':
+			pi=addcomment.objects.get(pk=sno)
+			pi.delete()
+			return HttpResponseRedirect('/')
+
+	else:
+		return HttpResponseRedirect('/login/')
+
+def editcomment(request,sno):
+	if request.user.is_authenticated:
+		if request.method=='POST':
+			pi=addcomment.objects.get(pk=sno)
+			fm=commentform(request.POST,instance=pi)
+			if fm.is_valid():
+				fm.save()
+				return HttpResponseRedirect('/')
+
+		else:
+			pi=addcomment.objects.get(pk=sno)
+			fm=commentform(instance=pi)
+		return render(request,'core/editcomment.html',{'fm':fm})
+	else:
+		return HttpResponseRedirect('/login/')
 
 
 
